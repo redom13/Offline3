@@ -2,12 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def target_function(x, function_type):
-    if function_type == "polynomial":
+    if function_type == "parabolic":
         return (x_values>=-2)*(x_values<=2)*x_values**2
     elif function_type == "triangular":
-        return 2*np.abs(x/2.0-np.floor(x/2.0+0.5))
+        return 2*np.abs(x/2.0-np.floor(x/2.0+0.5))*(x_values>=-2)*(x_values<=2)
     elif function_type == "sawtooth":
-        return x - np.floor(x)
+        return (x - np.floor(x))*(x_values>=-2)*(x_values<=2)
     elif function_type == "rectangular":
         return np.where(np.cos(4*x)>=0,0.5,-0.5)*(x_values>=-2)*(x_values<=2)
     
@@ -20,7 +20,7 @@ def fourier_transform(signal, frequencies, sampled_times):
     # Store the fourier transform results for each frequency. Handle the real and imaginary parts separately
     # use trapezoidal integration to calculate the real and imaginary parts of the FT
     for i, freq in enumerate(frequencies):
-        # exp(-2πift) = cos(-2πft) - i*sin(-2πft)
+        # exp(-2πift) = cos(-2πft) + i*sin(-2πft)
         integrand_real = signal * np.cos(-2 * np.pi * freq * sampled_times)
         integrand_imag = signal * np.sin(-2 * np.pi * freq * sampled_times)
         
@@ -49,20 +49,16 @@ def inverse_fourier_transform(ft_signal, frequencies, sampled_times):
 
     return reconstructed_signal
 
-# def triangular_wave(x):
-#     return 2*np.abs(x/2.0-np.floor(x/2.0+0.5))
 
-for function_type in ["rectangular"]:
+for function_type in ["parabolic","triangular","sawtooth","rectangular"]:
     # Define the interval and function and generate appropriate x values and y values
     x_values = np.linspace(-10, 10, 1000)
-    # y_values = (x_values>=-2)*(x_values<=2)*x_values**2
-    # y_values = target_function(x_values, function_type)
-    y_values = np.cos(x_values)
+    y_values = target_function(x_values, function_type)
 
     # Plot the original function
     plt.figure(figsize=(12, 4))
-    plt.plot(x_values, y_values, label="Original y = x^2")
-    plt.title("Original Function (y = x^2)")
+    plt.plot(x_values, y_values, label=f"Original {function_type}")
+    plt.title(f"Original Function {function_type}")
     plt.xlabel("x")
     plt.ylabel("y")
     plt.legend()
@@ -79,7 +75,7 @@ for function_type in ["rectangular"]:
         #  plot the FT data
         plt.figure(figsize=(12, 6))
         plt.plot(frequencies, np.sqrt(ft_data[0]**2 + ft_data[1]**2))
-        plt.title("Frequency Spectrum of y = x^2")
+        plt.title(f"Frequency Spectrum of {function_type}")
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Magnitude")
         plt.show()
@@ -88,9 +84,9 @@ for function_type in ["rectangular"]:
         reconstructed_y_values = inverse_fourier_transform(ft_data, frequencies, sampled_times)
         # Plot the original and reconstructed functions for comparison
         plt.figure(figsize=(12, 4))
-        plt.plot(x_values, y_values, label="Original y = x^2", color="blue")
-        plt.plot(sampled_times, reconstructed_y_values, label="Reconstructed y = x^2", color="red", linestyle="--")
-        plt.title("Original vs Reconstructed Function (y = x^2)")
+        plt.plot(x_values, y_values, label=f"Original {function_type}", color="blue")
+        plt.plot(sampled_times, reconstructed_y_values, label=f"Reconstructed {function_type}", color="red", linestyle="--")
+        plt.title(f"Original vs Reconstructed Function {function_type}")
         plt.xlabel("x")
         plt.ylabel("y")
         plt.legend()

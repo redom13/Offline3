@@ -68,11 +68,9 @@ filtered_ft_data[1] = ft_data[1].copy()
 # Try to filter out the frequencies for which you get the best result.
 # Experiment with different ideas like make the values for low frequencies zero, or make high frequencies zero, or make a range of frequencies zero. 
 
-# Find peaks in frequency spectrum
 # magnitude_spectrum = np.sqrt(ft_data[0]**2 + ft_data[1]**2)
 # threshold = 0.002 * np.max(magnitude_spectrum)  # Adjust threshold as needed
 
-# # Identify buzzer frequencies (peaks in spectrum)
 # peak_indices = np.where(magnitude_spectrum > threshold)[0]
 # print("Potential buzzer frequencies (Hz):", frequencies[peak_indices])
 
